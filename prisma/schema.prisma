@@ -13,7 +13,29 @@ datasource db {
 }
 
 model User {
-  id String @id @unique @default(uuid())
+  id String @id @default(uuid())
+  name String
   email String @unique
   password String
+  arenas ArenaParticipant[] // User has many participation entries.
+  creator Arena[]            // User can create mutiple arenas
+  createdAt DateTime @default(now())
+}
+
+model Arena {
+  id String @id @default(uuid())
+  title String 
+  description String
+  creatorId String 
+  creator User @relation(fields: [creatorId],references: [id])
+  arenaParticipant ArenaParticipant[]
+  createdAt DateTime @default(now())
+}
+
+model ArenaParticipant {
+  id String @id @default(uuid())
+  userId String
+  arenaId String
+  user User @relation(fields: [userId],references: [id])
+  arena Arena @relation(fields: [arenaId],references: [id])
 }
