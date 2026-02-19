@@ -14,7 +14,6 @@ export const userService = {
     const user = await userRepository.createUser({
       ...data,password:hashPassword
     })
-    console.log("created user",user);
     return user;
   },
 
@@ -24,9 +23,7 @@ export const userService = {
 
     const isValid = await bcrypt.compare(data.password,user.password)
     if(!isValid) throw new Error("Invalid credentials");
-
-    console.log("secret key",JWT_SECRET);
-    const token = jwt.sign({userId:user.id},JWT_SECRET);
+    const token = jwt.sign({userId:user.id},JWT_SECRET, { expiresIn: "1d" });
 
     return {token};
   },
@@ -34,6 +31,6 @@ export const userService = {
   getProfile: async(userId:string) => {
     const user = await userRepository.findById(userId);
     if (!user) throw new Error("User not found");
-    return {id:user.id,name:user.name,email:user.name};
+    return {id:user.id,name:user.name,email:user.email};
   }
 }
